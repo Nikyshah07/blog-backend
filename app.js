@@ -4,10 +4,26 @@ import User from './models/User.js';
 import Blog from './models/Blog.js';
 import bcrypt from 'bcryptjs'
 import cors from 'cors'
+
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 const app=express();
 app.use(cors())
 app.use(express.json())
-mongoose.connect("mongodb+srv://niky:123@cluster0.zinai.mongodb.net/blog")
+
+// mongoose.connect("mongodb+srv://niky:123@cluster0.zinai.mongodb.net/blog")
+try{
+    const response=await mongoose.connect(`${process.env.URI}`,{ useNewUrlParser: true, useUnifiedTopology: true })
+    if(response)
+    {
+        console.log("Connected to DB")
+    }
+}
+   catch(error){
+        console.log(error)
+    }
 app.get('/api',async(req,res,next)=>{
     let users;
     try{
@@ -249,7 +265,7 @@ return res.status(200).json({blog})
 app.use('/',(req,res)=>{
     res.send("hello")
 })
-app.listen(5000,()=>{
+app.listen(`${process.env.PORT}`,()=>{
     console.log("Server started")
 })
 
